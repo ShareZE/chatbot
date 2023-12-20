@@ -18,7 +18,7 @@ st.set_page_config(page_title="Chat with the Pietra Assistant, powered by LlamaI
                    menu_items=None)
 
 load_dotenv()
-openai.api_key = os.environ.get('OPENAI_API_KEY')
+openai.api_key = st.secrets["OPENAI_API_KEY"]
 st.title("Chat with the Pietra Assistant")
 
 if "messages" not in st.session_state.keys():  # Initialize the chat messages history

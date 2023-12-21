@@ -30,28 +30,44 @@ if "messages" not in st.session_state.keys():  # Initialize the chat messages hi
 @st.cache_resource(show_spinner=False)
 def load_data():
     with st.spinner(text="Pietra Assistant Getting Online – hang tight!"):
-        supplier_dir = os.path.dirname(os.path.abspath(__file__)) + '/storage/supplier_16625_index_json'
-        supplier_index = load_index_from_storage(
-            storage_context=StorageContext.from_defaults(persist_dir=supplier_dir),
+        supplier_info_dir = os.path.dirname(os.path.abspath(__file__)) + '/storage/supplier_info_16625_index_json'
+        supplier_info_retriever = load_index_from_storage(
+            storage_context=StorageContext.from_defaults(persist_dir=supplier_info_dir),
+        ).as_retriever(similarity_top_k=1)
+        supplier_item_dir = os.path.dirname(os.path.abspath(__file__)) + '/storage/supplier_item_16625_index_json'
+        supplier_item_retriever = load_index_from_storage(
+            storage_context=StorageContext.from_defaults(persist_dir=supplier_item_dir),
+        ).as_retriever(similarity_top_k=10)
+        supplier_chat_dir = os.path.dirname(os.path.abspath(__file__)) + '/storage/supplier_chat_16625_index_json'
+        supplier_chat_retriever = load_index_from_storage(
+            storage_context=StorageContext.from_defaults(persist_dir=supplier_chat_dir),
+        ).as_retriever(similarity_top_k=3)
+
+        supplier_info_tool = RetrieverTool.from_defaults(
+            retriever=supplier_info_retriever,
+            description="Useful to know the supplier. The supplier has name, categories, moq, sample-cost, country, bio, notable works, attributes, customizations",
         )
-        supplier_retriever = supplier_index.as_retriever(similarity_top_k=1)
-        # supplier_tool = RetrieverTool.from_defaults(
-        #     retriever=supplier_retriever,
-        #     description="Useful to know the supplier. The supplier has name, categories, country, bio, notable works, attributes, customizations, item information",
-        # )
-        # # define retriever
-        # llm = OpenAI(model="gpt-4")
-        # retriever = RouterRetriever(
-        #     selector=PydanticSingleSelector.from_defaults(llm=llm),
-        #     retriever_tools=[
-        #         supplier_tool,
-        #     ],
-        # )
+        supplier_item_tool = RetrieverTool.from_defaults(
+            retriever=supplier_item_retriever,
+            description="Useful to know the supplier products. The product has name, description.",
+        )
+        supplier_chat_tool = RetrieverTool.from_defaults(
+            retriever=supplier_chat_retriever,
+            description="Useful if you don’t want to know supplier information, but just want to communicate with suppliers",
+        )
+        # define retriever
+        llm = OpenAI(model="gpt-4")
+        retriever = RouterRetriever(
+            selector=PydanticSingleSelector.from_defaults(llm=llm),
+            retriever_tools=[
+                supplier_info_tool, supplier_item_tool, supplier_chat_tool
+            ],
+        )
 
-        return supplier_retriever, supplier_index
+        return retriever
 
 
-supplier_retriever, supplier_index = load_data()
+supplier_retriever = load_data()
 
 if "chat_engine" not in st.session_state.keys():  # Initialize the chat engine
     service_context = ServiceContext.from_defaults(

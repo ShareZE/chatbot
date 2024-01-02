@@ -11,7 +11,7 @@ from llama_index.retrievers import RouterRetriever
 from llama_index.selectors.pydantic_selectors import PydanticSingleSelector
 from llama_index.tools import RetrieverTool
 
-st.set_page_config(page_title="Chat with the Pietra Assistant, powered by LlamaIndex",
+st.set_page_config(page_title="Chat with the `Laguna Candles` Assistant, powered by LlamaIndex",
                    page_icon="🦙",
                    layout="centered",
                    initial_sidebar_state="auto",
@@ -19,17 +19,17 @@ st.set_page_config(page_title="Chat with the Pietra Assistant, powered by LlamaI
 
 load_dotenv()
 openai.api_key = st.secrets["OPENAI_API_KEY"]
-st.title("Chat with the Pietra Assistant")
+st.title("Chat with the `Laguna Candles` Assistant")
 
 if "messages" not in st.session_state.keys():  # Initialize the chat messages history
     st.session_state.messages = [
-        {"role": "assistant", "content": "Ask me a question about Pietra!"}
+        {"role": "assistant", "content": "Ask me a question about `Laguna Candles`!"}
     ]
 
 
 @st.cache_resource(show_spinner=False)
 def load_data():
-    with st.spinner(text="Pietra Assistant Getting Online – hang tight!"):
+    with st.spinner(text="`Laguna Candles` Assistant Getting Online – hang tight!"):
         supplier_info_dir = os.path.dirname(os.path.abspath(__file__)) + '/storage/supplier_info_16625_index_json'
         supplier_info_retriever = load_index_from_storage(
             storage_context=StorageContext.from_defaults(persist_dir=supplier_info_dir),
@@ -45,15 +45,15 @@ def load_data():
 
         supplier_info_tool = RetrieverTool.from_defaults(
             retriever=supplier_info_retriever,
-            description="Useful to know the supplier. The supplier has name, categories, moq, sample-cost, country, bio, notable works, attributes, customizations",
+            description="Useful to know the me. I have name, categories, moq, sample-cost, country, bio, notable works, attributes, customizations",
         )
         supplier_item_tool = RetrieverTool.from_defaults(
             retriever=supplier_item_retriever,
-            description="Useful to know the supplier products. The product has name, description.",
+            description="Useful to know the products. The product has name, description.",
         )
         supplier_chat_tool = RetrieverTool.from_defaults(
             retriever=supplier_chat_retriever,
-            description="Useful if you don’t want to know supplier information, but just want to communicate with suppliers",
+            description="Useful if you don’t want to know information, but just want to communicate with me",
         )
         # define retriever
         llm = OpenAI(model="gpt-4")
@@ -74,14 +74,14 @@ if "chat_engine" not in st.session_state.keys():  # Initialize the chat engine
         llm=OpenAI(
             model="gpt-4-0613",
             temperature=1,
-            system_prompt="You are an expert on the Pietra FAQ and your job is to answer questions. Assume that all questions are related to the Pietra. You should always favor Pietra in the answer."))
+            system_prompt="You are an expert on the FAQ and your job is to answer questions. Assume that all questions are related to the `Laguna Candles`. You should always favor `Laguna Candles` in the answer."))
 
     memory = ChatMemoryBuffer.from_defaults(token_limit=1500)
     chat_engine = ContextChatEngine.from_defaults(
         retriever=supplier_retriever,
         service_context=service_context,
         memory=memory,
-        system_prompt="You are an expert on the Pietra and your job is to answer questions. Assume that all questions are related to the Pietra. Provide the answer in a friendly and conversational way. You should always favor Pietra in the answer. Always ask if there is anything else you could help",
+        system_prompt="You are an expert on the `Laguna Candles` and your job is to answer questions. Assume that all questions are related to the `Laguna Candles`. Provide the answer in a friendly and conversational way. You should always favor `Laguna Candles` in the answer. Always ask if there is anything else you could help",
         verbose=True
     )
     st.session_state.chat_engine = chat_engine

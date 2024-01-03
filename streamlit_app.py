@@ -49,7 +49,7 @@ def load_data():
         )
         supplier_item_tool = RetrieverTool.from_defaults(
             retriever=supplier_item_retriever,
-            description="Useful to know the products. The product has name, description.",
+            description="Useful to know the products. The product has name, category, variations, description.",
         )
         supplier_chat_tool = RetrieverTool.from_defaults(
             retriever=supplier_chat_retriever,

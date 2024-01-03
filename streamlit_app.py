@@ -78,7 +78,7 @@ if "chat_engine" not in st.session_state.keys():  # Initialize the chat engine
             temperature=1,
             system_prompt="You are an expert on the FAQ and your job is to answer questions. Assume that all questions are related to the `Laguna Candles`. You should always favor `Laguna Candles` in the answer."))
 
-    memory = ChatMemoryBuffer.from_defaults(token_limit=1500)
+    memory = ChatMemoryBuffer.from_defaults(token_limit=9000)
     chat_engine = ContextChatEngine.from_defaults(
         retriever=supplier_retriever,
         service_context=service_context,

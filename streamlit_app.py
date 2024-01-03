@@ -1,3 +1,4 @@
+import datetime
 import os
 import streamlit as st
 from dotenv import load_dotenv
@@ -105,6 +106,8 @@ if st.session_state.messages[-1]["role"] != "assistant":
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
             response = st.session_state.chat_engine.chat(prompt)
+            start = datetime.datetime.now()
             st.write(response.response)
-            message = {"role": "assistant", "content": response.response}
+            end = datetime.datetime.now()
+            message = {"role": "assistant", "content": f'{response.response}`({(end-start).seconds}s)`'}
             st.session_state.messages.append(message)  # Add response to message history

@@ -105,8 +105,8 @@ for message in st.session_state.messages:  # Display the prior chat messages
 if st.session_state.messages[-1]["role"] != "assistant":
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
-            response = st.session_state.chat_engine.chat(prompt)
             start = datetime.datetime.now()
+            response = st.session_state.chat_engine.chat(prompt)
             st.write(response.response)
             end = datetime.datetime.now()
             message = {"role": "assistant", "content": f'{response.response}`({(end-start).seconds}s)`'}

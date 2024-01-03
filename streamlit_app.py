@@ -11,6 +11,8 @@ from llama_index.retrievers import RouterRetriever
 from llama_index.selectors.pydantic_selectors import PydanticSingleSelector
 from llama_index.tools import RetrieverTool
 
+ai_model = 'gpt-4-1106-preview'
+
 st.set_page_config(page_title="Chat with the `Laguna Candles` Assistant, powered by LlamaIndex",
                    page_icon="🦙",
                    layout="centered",
@@ -34,14 +36,14 @@ def load_data():
         supplier_info_retriever = load_index_from_storage(
             storage_context=StorageContext.from_defaults(persist_dir=supplier_info_dir),
         ).as_retriever(similarity_top_k=1)
-        supplier_item_dir = os.path.dirname(os.path.abspath(__file__)) + '/storage/supplier_item_16625_index_json'
+        supplier_item_dir = os.path.dirname(os.path.abspath(__file__)) + '/storage/supplier_ful_item_16625_index_json'
         supplier_item_retriever = load_index_from_storage(
             storage_context=StorageContext.from_defaults(persist_dir=supplier_item_dir),
         ).as_retriever(similarity_top_k=10)
-        supplier_chat_dir = os.path.dirname(os.path.abspath(__file__)) + '/storage/supplier_chat_16625_index_json'
-        supplier_chat_retriever = load_index_from_storage(
-            storage_context=StorageContext.from_defaults(persist_dir=supplier_chat_dir),
-        ).as_retriever(similarity_top_k=3)
+        # supplier_chat_dir = os.path.dirname(os.path.abspath(__file__)) + '/storage/supplier_chat_16625_index_json'
+        # supplier_chat_retriever = load_index_from_storage(
+        #     storage_context=StorageContext.from_defaults(persist_dir=supplier_chat_dir),
+        # ).as_retriever(similarity_top_k=3)
 
         supplier_info_tool = RetrieverTool.from_defaults(
             retriever=supplier_info_retriever,
@@ -56,7 +58,7 @@ def load_data():
         #     description="Useful if you don’t want to know information, but just want to communicate with me",
         # )
         # define retriever
-        llm = OpenAI(model="gpt-4")
+        llm = OpenAI(model=ai_model)
         retriever = RouterRetriever(
             selector=PydanticSingleSelector.from_defaults(llm=llm),
             retriever_tools=[
@@ -74,11 +76,11 @@ supplier_retriever = load_data()
 if "chat_engine" not in st.session_state.keys():  # Initialize the chat engine
     service_context = ServiceContext.from_defaults(
         llm=OpenAI(
-            model="gpt-4-0613",
+            model=ai_model,
             temperature=1,
             system_prompt="You are an expert on the FAQ and your job is to answer questions. Assume that all questions are related to the `Laguna Candles`. You should always favor `Laguna Candles` in the answer."))
 
-    memory = ChatMemoryBuffer.from_defaults(token_limit=9000)
+    memory = ChatMemoryBuffer.from_defaults(token_limit=15000)
     chat_engine = ContextChatEngine.from_defaults(
         retriever=supplier_retriever,
         service_context=service_context,

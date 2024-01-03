@@ -51,10 +51,10 @@ def load_data():
             retriever=supplier_item_retriever,
             description="Useful to know the products. The product has name, category, variations, description.",
         )
-        supplier_chat_tool = RetrieverTool.from_defaults(
-            retriever=supplier_chat_retriever,
-            description="Useful if you don’t want to know information, but just want to communicate with me",
-        )
+        # supplier_chat_tool = RetrieverTool.from_defaults(
+        #     retriever=supplier_chat_retriever,
+        #     description="Useful if you don’t want to know information, but just want to communicate with me",
+        # )
         # define retriever
         llm = OpenAI(model="gpt-4")
         retriever = RouterRetriever(
@@ -62,7 +62,7 @@ def load_data():
             retriever_tools=[
                 supplier_info_tool,
                 supplier_item_tool,
-                supplier_chat_tool
+                # supplier_chat_tool
             ],
         )
 
